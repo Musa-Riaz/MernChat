@@ -1,11 +1,36 @@
 import React from 'react'
 import { Link, useActionData } from 'react-router-dom'
 import { useState } from 'react';
+import axios from 'axios'
+import {message} from 'antd'
+import { useDispatch, useSelector } from 'react-redux';
+import { setUser, setAuth } from '../redux/features/userSlice';
 
 const Register = () => {
+    const dispatch = useDispatch();
     const [username, setUserName] = useState();
     const [email, setEmail] = useState();
     const [password, setPassword] = useState();
+
+    const handleRegister = async (e)=>{
+      e.preventDefault();
+      try{
+        const res = await axios.post("http://localhost:4500/api/v1/user/register", {
+          username,
+          email,
+          password
+        });
+        if(res.data.success){
+          dispatch(setUser(res.data.user));
+          dispatch(setAuth(true));
+          message.success("User Registered !");
+        }
+      }
+      catch(err){
+        console.log(err);
+      }
+    }
+
   return (
     <div className='dark '>
     
@@ -17,7 +42,7 @@ const Register = () => {
         </div>
 
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm border rounded-lg shadow-xl p-10">
-          <form className="space-y-6">
+          <form className="space-y-6" onSubmit={handleRegister}>
             <div>
               <label  className="block text-sm font-medium leading-6 text-gray-900">
                 Username
@@ -25,6 +50,8 @@ const Register = () => {
               <div className="mt-2">
                 <input
                   name="username"
+                  value={username}
+                  onChange={(e)=>setUserName(e.target.value)}
                   type="text"
                   required
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
@@ -32,7 +59,7 @@ const Register = () => {
               </div>
             </div>
             <div>
-              <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">
+              <label  className="block text-sm font-medium leading-6 text-gray-900">
                 Email address
               </label>
               <div className="mt-2">
@@ -41,6 +68,8 @@ const Register = () => {
                   type="email"
                   required
                   autoComplete="email"
+                  value={email}
+                  onChange={(e)=>setEmail(e.target.value)}
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 />
               </div>
@@ -48,7 +77,7 @@ const Register = () => {
 
             <div>
               <div className="flex items-center justify-between">
-                <label htmlFor="password" className="block text-sm font-medium leading-6 text-gray-900">
+                <label className="block text-sm font-medium leading-6 text-gray-900">
                   Password
                 </label>
                 
@@ -58,6 +87,8 @@ const Register = () => {
                   name="password"
                   type="password"
                   required
+                  value={password}
+                  onChange={(e)=>setPassword(e.target.value)}
                   autoComplete="current-password"
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 />

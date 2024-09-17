@@ -21,7 +21,7 @@ exports.userRegisterController = catchAsync ( async (req, res, next) => {
             JWT.sign({userId: user._id}, process.env.SECRET_KEY, function(err, token){
                 if(err) throw err;
 
-                res.cookie('token', token).status(201).json({
+                res.cookie('token', token, {httpOnly: true}).status(201).json({
                     success:'true',
                     message:"User created successfully",
                     token,
@@ -56,7 +56,7 @@ exports.userSignInController = catchAsync( async (req, res, next) =>{
         if(isPasswordCorrect){
             JWT.sign({userId: user._id}, process.env.SECRET_KEY, (err, token) => {
                 if(err) throw err
-                res.cookie('token', token).status(200).json({
+                res.cookie('token', token, {httpOnly: true}).status(200).json({
                     success:true,
                     message:"User found",
                     token,
